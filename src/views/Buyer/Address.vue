@@ -26,7 +26,7 @@
       <el-table-column prop="address" label="地址"></el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button @click="deleteAddressRequest(scope.aid)">删除</el-button>
+          <el-button @click="deleteAddressRequest(scope.row.aid)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -35,9 +35,11 @@
 
 <script>
 import { addAddress, getAddress, deleteAddress } from '../../api/apis.js'
+import { ElMessage } from 'element-plus';
 export default {
   data() {
     return {
+      ElMessage,
       showDialog: false,
       dataForm: {
         username: '',
@@ -90,13 +92,13 @@ export default {
 
       getAddress({ username: localStorage.getItem('loginUserName') }).then((res) => {
         console.log(res);
-        if (res.status == '200') {
+        if (res.stateCode == '200') {
           this.addresses = res.data
         } else {
-          if (res.statusText) {
-            ElMessage.error(res.statusText);
+          if (res.stateMsg) {
+            ElMessage.error(res.stateMsg);
           } else {
-            ElMessage.error('未知错误, Status: ' + res.status);
+            ElMessage.error('未知错误, stateCode: ' + res.stateCode);
           }
         }
       });
@@ -107,13 +109,13 @@ export default {
       // this.addresses.splice(index, 1);
       deleteAddress({ aid: aid }).then((res) => {
         console.log(res);
-        if (res.status === '200') {
+        if (res.stateCode == '200') {
           ElMessage.success('删除收货地址成功');
         } else {
-          if (res.statusText) {
-            ElMessage.error(res.statusText);
+          if (res.stateMsg) {
+            ElMessage.error(res.stateMsg);
           } else {
-            ElMessage.error('未知错误, Status: ' + res.status);
+            ElMessage.error('未知错误, stateCode: ' + res.stateCode);
           }
         }
       });
@@ -127,25 +129,24 @@ export default {
     addAdressRequest() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addAddress().then(res => {
+          addAddress(this.dataForm).then(res => {
             console.log(res);
-            if (res.status === '200') {
+            if (res.stateCode == '200') {
               // localStorage.setItem['loginUserName'] = this.dataForm.userName;
               // localStorage.setItem['loginUserType'] = this.dataForm.userType;
               ElMessage.success('添加收货地址成功');
               this.showDialog = false;
             } else {
-              if (res.statusText) {
-                ElMessage.error(res.statusText);
+              if (res.stateMsg) {
+                ElMessage.error(res.stateMsg);
               } else {
-                ElMessage.error('未知错误, Status: ' + res.status);
-
+                ElMessage.error('未知错误, stateCode: ' + res.stateCode);
               }
             }
           }).catch(error => {
             if (error.response) {
               // 请求已发出，但服务器响应了状态码不在2xx范围内
-              console.error('Error status', error.response.status);
+              console.error('Error stateCode', error.response.stateCode);
               console.error('Error data', error.response.data);
             } else if (error.request) {
               // 请求已发出，但没有收到响应

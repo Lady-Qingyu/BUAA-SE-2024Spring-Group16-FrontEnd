@@ -6,6 +6,12 @@ export const userLogin = params => http.fetchPost(`/users/login?username=${param
 // Register
 export const userRegister = params => http.fetchPost(`/users/reg?username=${params.username}&password=${params.password}&type=${params.userType}`, params);
 
+// Change Password 
+export const changePassword = params => http.fetchPost(`/users/change_password?oldPassword=${params.oldPassword}&newPassword=${params.newPassword}`);
+
+// Change Personal Info
+export const changePersonalInfoUrl = '/users/change_info';
+
 // Get all products in homepage
 export const getAllGoods = params => http.fetchGet('/products/all', params);
 
@@ -58,8 +64,8 @@ export const getAddress = params => http.fetchPost(`/address/list?username=${par
 // add address
 export const addAddress = params => http.fetchPost(`/address/add?username=${params.username}&name=${params.name}&phone=${params.phone}&address=${params.address}`, params);
 
-// delay address
-export const deleteAddress = params => http.fetchPost(`/address/delete?aid=${params.aid}`, params);
+// delete address
+export const deleteAddress = params => http.fetchPost(`/address/delete?id=${params.aid}`, params);
 
 // upload Product(special)
 export const uploadProductUrl = '/products/upload';
@@ -68,7 +74,7 @@ export const uploadProductUrl = '/products/upload';
 export const editProductUrl = '/products/update';
 
 // buyer comments a product
-export const userComment = params => http.fetchPost(`/users/comment?id=${params.id}&userName=${params.username}&rate=${params.content}&images=${params.images}&productId=${params.productId}`);
+export const userComment = params => http.fetchPost(`/users/comment?id=${params.id}&userName=${params.username}&rate=${params.content}&productId=${params.productId}`);
 
 export const userCommentUrl = '/users/comment';
 
@@ -83,3 +89,6 @@ export const addCartItemQuantity = params => http.fetchPost(`/cart/add_num?cid=$
 
 // get user's all cart items
 export const getCartList = params => http.fetchPost(`/cart/list?username=${params.username}`, params);
+
+// get shopid by owner's username
+export const getShopId = params => http.fetchPost(`/shop/get_sid?username=${params.username}`, params);

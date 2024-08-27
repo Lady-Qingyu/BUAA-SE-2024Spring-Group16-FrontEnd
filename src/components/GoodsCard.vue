@@ -2,14 +2,14 @@
   <!-- 展示用的商品卡片 -->
   <div class="good-item">
     <div class="good-img">
-      <a @click="openProduct">
-        <img :src="productImageBig" :alt="productName" :key="productImageBig">
+      <a>
+        <el-image :src="productImageBig" :alt="productName" :key="productImageBig"/>
       </a>
       <h6 class="good-title">{{ productName }}</h6>
       <!-- <h3 class="sub-title ellipsis">{{ subTitle }}</h3> -->
       <div class="good-price pr">
         <div class="ds pa good-btn">
-          <el-button @click="openProduct" style="margin: 0 20px" type="primary"
+          <el-button v-show="$route.name != 'Goodslist'" @click="openProduct" style="margin: 0 20px" type="primary"
             size="small">查看详情</el-button>
           <el-button style="margin: 0 20px" size="small" @click="addToCartRequest" type="info"
             v-show="$route.name != 'Goodslist' && $route.name != 'Comment'">加入购物车</el-button>
@@ -78,7 +78,7 @@ export default {
     getGoodsDetailRequest() {
       getGoodsDetail({ id: this.productID }).then(res => {
         if (res.stateCode == '200') {
-          this.buyInfo.version = res.data.version[0];
+          this.buyInfo.version = res.data.version[1];
         } else {
           this.buyInfo.version = null;
           if (res.stateMsg) {

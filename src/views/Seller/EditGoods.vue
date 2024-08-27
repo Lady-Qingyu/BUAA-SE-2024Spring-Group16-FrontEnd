@@ -5,10 +5,10 @@
         <el-input v-model="goods.name"></el-input>
       </el-form-item>
       <el-form-item label="商品版本">
-        <el-input v-for="i in 3" :key="i" v-model="good.version[i]" placeholder="请输入版本"></el-input>
+        <el-input v-for="i in 3" :key="i" v-model="goods.version[i]" placeholder="请输入版本"></el-input>
       </el-form-item>
       <el-form-item label="商品图片">
-        <el-input v-model="good.version[0]"></el-input>
+        <el-input v-model="goods.imageSrc[0]"></el-input>
         <!-- <el-upload action="your-upload-url" list-type="picture"> -->
         <!-- <el-button slot="trigger" size="small" type="primary">选择图片</el-button> -->
         <!-- </el-upload> -->
@@ -17,7 +17,7 @@
         <el-input v-model="goods.price" placeholder="请输入单价"></el-input>
       </el-form-item>
       <el-form-item label="商品描述">
-        <el-input type="textarea" v-model="goods.description"></el-input>
+        <el-input type="textarea" v-model="goods.details"></el-input>
       </el-form-item>
       <el-form-item label="库存量">
         <el-input-number v-model="goods.storage" :min="0"></el-input-number>
@@ -31,7 +31,7 @@
 
 <script>
 import axios from 'axios';
-import { editProductUrl, getGoodsDetail } from '../../api/apis.js'
+import { editProductUrl, getGoodsDetail, getShopId } from '../../api/apis.js'
 import { ElMessage } from 'element-plus';
 
 export default {
@@ -47,17 +47,23 @@ export default {
         storage: 20,
         version: ['S', 'M', 'L', 'XL', 'XXL', 'custom'],
         price: 100.01,
-        imageSrc: ['https://sc01.alicdn.com/kf/HTB1Cic9HFXXXXbZXpXXq6xXFXXX3/200006212/HTB1Cic9HFXXXXbZXpXXq6xXFXXX3.jpg', '', ''],
+        imageSrc: ['https://sc01.alicdn.com/kf/HTB1Cic9HFXXXXbZXpXXq6xXFXXX3/200006212/HTB1Cic9HFXXXXbZXpXXq6xXFXXX3.jpg'],
         details: 'This is a test product.',
-        shopName: 'Bemani Sound Team',
-        shopId: 1,
+        shopName: localStorage.getItem('loginUserName'),
+        shopId: -1,
       },
     };
   },
   methods: {
-    getGoodsDetail,
+    getGoodsDetail, getShopId,
     updateGoodsRequest() {
-      axios.post(this.editProductUrl, this.goods).then(response => {
+      // console.log('sid: ' + this.goods.shopId);
+      console.log(this.goods);
+      axios.post(this.editProductUrl, this.goods, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
         const res = response.data;
         if (res.stateCode == '200') {
           ElMessage.success('修改成功');
@@ -72,9 +78,12 @@ export default {
       });
     },
     getGoodsDetailRequest() {
+      console.log('pid:' + this.pid);
       getGoodsDetail({ id: this.pid }).then(res => {
         if (res.stateCode == '200') {
+          console.log(res.data);
           this.goods = res.data;
+          this.goods.productId = this.pid;
         } else {
           if (res.stateMsg) {
             ElMessage.error(res.stateMsg + ' Status: ' + res.stateCode);
@@ -84,10 +93,20 @@ export default {
         }
       });
     },
+    getShopIdRequest() {
+      getShopId({username: this.goods.shopName}).then(res => {
+        if (res.stateCode == '200') {
+          this.goods.shopId = res.data;
+          console.log('sid: ' +  this.goods.shopId);
+        }
+      });
+    }
   },
   mounted() {
     this.pid = this.$route.params.goodsId;
     this.getGoodsDetailRequest();
+    console.log('username: ' + this.goods.shopName);
+    this.getShopIdRequest();
   },
 };
 </script>

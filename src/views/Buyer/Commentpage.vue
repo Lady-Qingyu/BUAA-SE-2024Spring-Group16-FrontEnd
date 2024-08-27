@@ -57,25 +57,39 @@ export default {
         ElMessage.warning('请输入评价');
       } else {
         const params = {
-          username: localStorage.getItem('loginUserName'),
+          id: -1,
+          userName: localStorage.getItem('loginUserName'),
           rate: this.rate,
           content: this.content,
           images: [''],
           productId: this.$route.params.goodsId,
         }
+        // const formData = new FormData();
+        // formData.append('username', localStorage.getItem('loginUserName'));
+        // formData.append('rate', this.rate);
+        // formData.append('content', this.content);
+        // formData.append('images', ''); // 假设你有图片文件时使用 formData.append('images', file)
+        // formData.append('productId', this.$route.params.goodsId);
 
-        axios.post(this.userCommentUrl, params).then(res => {
-          if (res.stateCode == '200') {
+        axios.post(this.userCommentUrl, params, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(res => {
+          console.log(params);
+          console.log(res.data);
+          if (res.data.stateCode == '200') {
             ElMessage.success('评论成功');
             this.$router.replace('/');
           } else {
-            if (res.stateMsg) {
+            if (res.data.stateMsg) {
               ElMessage.error(res.stateMsg);
             } else {
               ElMessage.error('未知错误, Status: ' + res.stateCode);
             }
           }
         });
+
         // userComment(params).then(res => {
         // if (res.stateCode == '200') {
         //   ElMessage.success('评论成功');

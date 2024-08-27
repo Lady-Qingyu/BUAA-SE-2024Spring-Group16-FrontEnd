@@ -95,7 +95,7 @@
 		<template v-for="(comment, i) in goods.comments" :key="i">
 			<el-row>
 				<el-col :span="8" style="text-align: left;" class="ml-10">
-					<h2> {{ comment.username }}</h2>
+					<h2> {{ comment.userName }}</h2>
 				</el-col>
 				<el-col :span="5" style="text-align: left;" class="mt-5">
 					<el-rate v-model="comment.rate" allow-half disabled />
@@ -171,7 +171,7 @@ export default {
 		this.getUserAddressRequest();
 		this.checkProductCollectedRequest();
 		this.checkShopSubscribedRequest();
-		this.buyInfo.version = this.goods.version[0];
+		this.buyInfo.version = this.goods.version[1];
 		this.selectedAid = this.userAddress[0].aid;
 	},
 
@@ -238,7 +238,7 @@ export default {
 			}).then(res => {
 				if (res.stateCode == '200') {
 					console.log(res.data);
-					this.$router.push(`/Comment/${res.data}`);
+					this.$router.push(`/Comment/${this.goods.productId}`);
 				} else {
 					if (res.stateMsg) {
 						ElMessage.error(res.stateMsg);
@@ -312,6 +312,7 @@ export default {
 		checkProductCollectedRequest() {
 			checkProductCollected({ username: this.buyInfo.username, pid: this.$route.params.goodsId }).then(res => {
 				if (res.stateCode == '200') {
+					console.log('Product:' + res.data);
 					this.productCollected = res.data;
 					console.log(this.productCollected)
 				} else {
@@ -326,6 +327,7 @@ export default {
 		checkShopSubscribedRequest() {
 			checkShopSubscribed({ username: this.buyInfo.username, sid: this.goods.shopId }).then(res => {
 				if (res.stateCode == '200') {
+					console.log('Shop:' + res.data);
 					this.shopSubscribed = res.data;
 					console.log(this.shopSubscribed)
 				} else {
@@ -340,7 +342,7 @@ export default {
 		getUserAddressRequest() {
 			getAddress({username: this.buyInfo.username}).then(res => {
 				if (res.stateCode == '200') {
-					if (res.data.size() == 0) {
+					if (res.data.length == 0) {
 						ElMessage.info('请先设置收货地址');
 						this.$router.push('/address');
 					} else {

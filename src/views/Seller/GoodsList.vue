@@ -30,7 +30,7 @@
 
 <script>
 import axios from 'axios';
-import { getShopProducts, editProductUrl } from '../../api/apis.js'
+import { getShopProducts, editProductUrl, getShopId } from '../../api/apis.js'
 import Postcard from '../../assets/postcard.jpg';
 import Postcard2 from '../../assets/postcard2.jpg';
 
@@ -45,8 +45,10 @@ export default {
     };
   },
   methods: {
-    getShopProducts,
+    getShopProducts, getShopId,
     getShopProductsRequest() {
+      this.getShopIdRequest();
+      console.log(this.sid)
       getShopProducts({ sid: this.sid }).then(res => {
         if (res.stateCode) {
           console.log(res.data);
@@ -60,10 +62,21 @@ export default {
         }
       });
     },
+    getShopIdRequest() {
+      getShopId({username: localStorage.getItem('loginUserName')}).then(res => {
+        if (res.stateCode == '200') {
+          this.sid = res.data;
+          console.log('sid: ' +  this.sid);
+        }
+      });
+    }
   },
-  mounted() {
-    // get sid
-    this.getShopProductsRequest();
+  mounted() {  
+    this.getShopIdRequest();
+    setTimeout(() => {
+      this.getShopProductsRequest();
+    }, 50);
+    // this.getShopProductsRequest();
   },
 };
 </script>

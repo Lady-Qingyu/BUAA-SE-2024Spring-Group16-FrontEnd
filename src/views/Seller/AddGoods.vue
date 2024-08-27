@@ -8,16 +8,19 @@
         <el-input v-for="i in 3" :key="i" v-model="good.version[i]" placeholder="请输入版本"></el-input>
       </el-form-item>
       <el-form-item label="商品图片">
-        <el-input v-model="good.version[0]"></el-input>
+        <el-input v-model="good.imageSrc[0]"></el-input>
         <!-- <el-upload action="your-upload-url" list-type="picture"> -->
         <!-- <el-button slot="trigger" size="small" type="primary">选择图片</el-button> -->
         <!-- </el-upload> -->
       </el-form-item>
       <el-form-item label="单价">
-        <el-input v-model="good.price" placeholder="请输入单价"></el-input>
+        <el-input-number v-model="good.price" :min="0"></el-input-number>
       </el-form-item>
+      <!-- <el-form-item label="单价">
+        <el-input v-model="good.price" placeholder="请输入单价"></el-input>
+      </el-form-item> -->
       <el-form-item label="商品描述">
-        <el-input type="textarea" v-model="good.description"></el-input>
+        <el-input type="textarea" v-model="good.details"></el-input>
       </el-form-item>
       <el-form-item label="库存量">
         <el-input-number v-model="good.storage" :min="0"></el-input-number>
@@ -31,7 +34,7 @@
 
 <script>
 import axios from 'axios';
-import { uploadProductUrl } from '../../api/apis.js'
+import { uploadProductUrl, getShopId } from '../../api/apis.js'
 import { ElMessage } from 'element-plus';
 export default {
   data() {
@@ -42,18 +45,23 @@ export default {
       good: {
         name: '',
         storage: 0,
-        version: ['', '', '', ''],
+        version: ['', '', ''],
         price: 0,
         imageSrc: [''],
         details: '',
-        shopName: '',
+        shopName: localStorage.getItem('loginUserName'),
         shopId: -1,
       },
     };
   },
   methods: {
+    getShopId,
     uploadGoods() {
-      axios.post(this.uploadProductUrl, this.good).then(response => {
+      axios.post(this.uploadProductUrl, this.good, {
+        headers: {
+          'Content-type': 'application/json'
+        }
+      }).then(response => {
         const res = response.data;
         if (res.stateCode == '200') {
           ElMessage.success('上传成功');
@@ -67,9 +75,19 @@ export default {
         }
       });
     },
+    getShopIdRequest() {
+      getShopId({username: this.good.shopName}).then(res => {
+        if (res.stateCode == '200') {
+          console.log(res.data);
+          this.good.shopId = res.data;
+          console.log('sid: ' +  this.good.shopId);
+        }
+      });
+    }
   },
   mounted() {
-
+    console.log('username: ' + this.good.shopName);
+    this.getShopIdRequest();
   },
 };
 </script>
