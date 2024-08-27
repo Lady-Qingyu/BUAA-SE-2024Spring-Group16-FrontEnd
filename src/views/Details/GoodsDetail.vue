@@ -338,17 +338,23 @@ export default {
 			});
 		},
 		getUserAddressRequest() {
-			// getAddress({username: this.buyInfo.username}).then(res => {
-			// 	if (res.stateCode == '200') {
-			// 		this.address = res.data;
-			// 	} else {
-			// 		if (res.stateMsg) {
-			// 			ElMessage.error(res.stateMsg);
-			// 		} else {
-			// 			ElMessage.error('未知错误, Status: ' + res.stateCode);
-			// 		}
-			// 	}
-			// }); 
+			getAddress({username: this.buyInfo.username}).then(res => {
+				if (res.stateCode == '200') {
+					if (res.data.size() == 0) {
+						ElMessage.info('请先设置收货地址');
+						this.$router.push('/address');
+					} else {
+						this.userAddress = res.data;
+						console.log(this.userAddress);
+					}
+				} else {
+					if (res.stateMsg) {
+						ElMessage.error(res.stateMsg);
+					} else {
+						ElMessage.error('未知错误, Status: ' + res.stateCode);
+					}
+				}
+			}); 
 		}
 	},
 };

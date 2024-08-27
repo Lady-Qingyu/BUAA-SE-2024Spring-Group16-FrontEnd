@@ -3,7 +3,8 @@ import Homepage from '../views/Buyer/Homepage.vue';
 import Reviewpage from '~/views/Buyer/Reviewpage.vue';
 import path from 'path';
 import { compile } from 'vue';
-//
+import { componentSizeMap } from 'element-plus';
+
 const routes = [
   {
     path: '/',
@@ -49,7 +50,7 @@ const routes = [
     component:()=>import("../views/Buyer/Address.vue")
   },
   {
-    path: '/Comment',
+    path: '/Comment/:goodsId',
     name: 'Comment',
     component: () => import("../views/Buyer/Commentpage.vue")
   },
@@ -67,7 +68,7 @@ const routes = [
     path: '/Seller/Goodslist',
     name: 'Goodslist',
     component: () => import("../views/Seller/GoodsList.vue")
-  }
+  },
 
 ];
 
